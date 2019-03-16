@@ -4,9 +4,16 @@ namespace App\Http\Controllers\V1;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
 
-class UserController.php extends Controller
+class UserController extends Controller
 {
+    public function __construct(\App\User $user, \App\Transformers\UserTransformer $transformer)
+    {
+        $this->user = $user;
+        $this->transformer = $transformer;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -25,7 +32,21 @@ class UserController.php extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // User input validation
+        $this->validate($request, [
+            'user.name' => ['required', 'min:1', 'max:100'],
+            'user.email' => ['required', 'email', 'min:1', 'max:100', 'unique:users,email'],
+            'user.password' => ['required', 'min:6', 'max:16'],
+        ]);
+
+        // Everything OK
+        $user = $this->user->create([
+            'name' => $request->input('user.name'),
+            'email' => $request->input('user.email'),
+            'password' => Hash::make($request->input('user.password')),
+        ]);
+
+        return $this->response->item($user, $this->transformer)->setStatusCode(Response::HTTP_CREATED);
     }
 
     /**
