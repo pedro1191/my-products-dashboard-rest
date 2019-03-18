@@ -34,16 +34,16 @@ class UserController extends Controller
     {
         // User input validation
         $this->validate($request, [
-            'user.name' => ['required', 'min:1', 'max:100'],
-            'user.email' => ['required', 'email', 'min:1', 'max:100', 'unique:users,email'],
-            'user.password' => ['required', 'min:6', 'max:16'],
+            'name' => ['required', 'min:1', 'max:100'],
+            'email' => ['required', 'email', 'min:1', 'max:100', 'unique:users,email'],
+            'password' => ['required', 'min:6', 'max:16'],
         ]);
 
         // Everything OK
         $user = $this->user->create([
-            'name' => $request->input('user.name'),
-            'email' => $request->input('user.email'),
-            'password' => Hash::make($request->input('user.password')),
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'password' => Hash::make($request->input('password')),
         ]);
 
         return $this->response->item($user, $this->transformer)->setStatusCode(Response::HTTP_CREATED);
