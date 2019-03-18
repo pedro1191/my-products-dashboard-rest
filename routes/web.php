@@ -26,18 +26,33 @@ $api->version('v1', [
     'namespace' => 'App\Http\Controllers\V1',
 ], function ($api) {
 
+    /**
+     * Unauthenticated Routes
+     */
+
+    // Auth
+    $api->post('/auth/login', ['uses' => 'AuthController@login', 'as' => 'api.auth.login']);
+
+    // Product
+    $api->get('/products', ['uses' => 'ProductController@index', 'as' => 'api.products.index']);
+    $api->get('/products/{id}', ['uses' => 'ProductController@show', 'as' => 'api.products.show']);
+
+    /**
+     * Authenticated Routes
+     */
     $api->group([
         'middleware' => ['api.auth'],
     ], function ($api) {
 
         // Auth
-        $api->post('/auth/login', ['uses' => 'AuthController@login', 'as' => 'api.auth.login']);
-        $api->get('/auth/me', ['middleware' => ['api.auth'], 'uses' => 'AuthController@me', 'as' => 'api.auth.me']);
-        $api->put('/auth/refresh', ['middleware' => ['api.auth'], 'uses' => 'AuthController@refresh', 'as' => 'api.auth.refresh']);
-        $api->delete('/auth/logout', ['middleware' => ['api.auth'], 'uses' => 'AuthController@logout', 'as' => 'api.auth.logout']);
+        $api->get('/auth/me', ['uses' => 'AuthController@me', 'as' => 'api.auth.me']);
+        $api->put('/auth/refresh', ['uses' => 'AuthController@refresh', 'as' => 'api.auth.refresh']);
+        $api->delete('/auth/logout',['uses' => 'AuthController@logout', 'as' => 'api.auth.logout']);
 
-        // User
-        $api->post('/users', ['middleware' => ['api.auth'], 'uses' => 'UserController@store', 'as' => 'api.users.store']);
+        // Product
+        $api->post('/products', ['uses' => 'ProductController@store', 'as' => 'api.products.store']);
+        $api->put('/products/{id}', ['uses' => 'ProductController@update', 'as' => 'api.products.update']);
+        $api->delete('/products/{id}', ['uses' => 'ProductController@destroy', 'as' => 'api.products.destroy']);
 
     });
 });
