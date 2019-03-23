@@ -11,6 +11,7 @@ class ProductTransformer extends Fractal\TransformerAbstract
             'id' => (int) $product->id,
             'name' => $product->name,
             'description' => $product->description,
+            'image' => $product->image,
             'link' => app('Dingo\Api\Routing\UrlGenerator')->version('v1')->route('api.products.show', ['id' => $product->id]),
         ];
     }

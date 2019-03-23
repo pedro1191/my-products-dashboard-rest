@@ -8,4 +8,5 @@ use Dingo\Api\Routing\Helpers;
 class Controller extends BaseController
 {
     use Helpers;
+    const DEFAULT_PAGINATION_RESULTS = 15;
 }
