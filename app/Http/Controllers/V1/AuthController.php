@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\V1;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,15 +18,23 @@ class AuthController extends Controller
     {
         // User input validation
         $this->validate($request, [
-            'email' => ['required', 'exists:users,email'],
+            'email' => ['required', 'email', 'exists:users,email'],
             'password' => ['required'],
         ]);
 
         $credentials = $request->only(['email', 'password']);
 
         if (! $token = Auth::attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json([
+                'message' => 'The given data was invalid.',
+                'status_code' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                'errors' => [
+                    'password' => ['Your password was incorrect.']
+                ]
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
+
+        \Log::info('User ' . Auth::user()->id . ' is logging in...');
 
         return $this->respondWithToken($token);
     }
@@ -47,6 +56,8 @@ class AuthController extends Controller
      */
     public function logout()
     {
+        \Log::info('User ' . Auth::user()->id . ' is logging out...');
+
         Auth::logout();
 
         return response()->json(['message' => 'Successfully logged out']);
@@ -59,6 +70,8 @@ class AuthController extends Controller
      */
     public function refresh()
     {
+        \Log::info('User ' . Auth::user()->id . ' is refreshing his/her token...');
+
         return $this->respondWithToken(Auth::refresh());
     }
 
