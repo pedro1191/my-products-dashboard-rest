@@ -15,5 +15,21 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
     return [
         'name' => $faker->name,
         'email' => $faker->email,
+        'password' => $faker->password,
+    ];
+});
+
+$factory->define(App\Category::class, function (Faker\Generator $faker) {
+    return [
+        'name' => $faker->name,
+    ];
+});
+
+$factory->define(App\Product::class, function (Faker\Generator $faker) {
+    return [
+        'name' => $faker->name,
+        'description' => $faker->text,
+        'image' => $faker->imageUrl(700, 400, 'abstract'),
+        'category_id' => $faker->randomElement(App\Category::all()->pluck('id')->toArray())
     ];
 });
