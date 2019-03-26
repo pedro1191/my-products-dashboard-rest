@@ -33,6 +33,10 @@ $api->version('v1', [
     // Auth
     $api->post('/auth/login', ['uses' => 'AuthController@login', 'as' => 'api.auth.login']);
 
+    // Category
+    $api->get('/categories', ['uses' => 'CategoryController@index', 'as' => 'api.categories.index']);
+    $api->get('/categories/{id}', ['uses' => 'CategoryController@show', 'as' => 'api.categories.show']);
+
     // Product
     $api->get('/products', ['uses' => 'ProductController@index', 'as' => 'api.products.index']);
     $api->get('/products/{id}', ['uses' => 'ProductController@show', 'as' => 'api.products.show']);
@@ -48,6 +52,11 @@ $api->version('v1', [
         $api->get('/auth/me', ['uses' => 'AuthController@me', 'as' => 'api.auth.me']);
         $api->put('/auth/refresh', ['uses' => 'AuthController@refresh', 'as' => 'api.auth.refresh']);
         $api->delete('/auth/logout',['uses' => 'AuthController@logout', 'as' => 'api.auth.logout']);
+
+        // Category
+        $api->post('/categories', ['uses' => 'CategoryController@store', 'as' => 'api.categories.store']);
+        $api->put('/categories/{id}', ['uses' => 'CategoryController@update', 'as' => 'api.categories.update']);
+        $api->delete('/categories/{id}', ['uses' => 'CategoryController@destroy', 'as' => 'api.categories.destroy']);
 
         // Product
         $api->post('/products', ['uses' => 'ProductController@store', 'as' => 'api.products.store']);
