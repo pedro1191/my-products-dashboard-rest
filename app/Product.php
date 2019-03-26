@@ -12,7 +12,7 @@ class Product extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'description', 'image'
+        'name', 'description', 'image', 'category_id'
     ];
 
     /**
@@ -21,4 +21,11 @@ class Product extends Model
      * @var array
      */
     protected $hidden = [];
+
+    /**
+     * Returns the product category
+     */
+    public function category() {
+        return $this->belongsTo('App\Category', 'category_id');
+    }
 }
