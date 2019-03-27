@@ -72,7 +72,7 @@ class ProductsTableSeeder extends Seeder
     {
         \DB::table('products')->delete();
 
-        $products = factory(\App\Product::class, 35)->make()->toArray();
+        $products = factory(\App\Product::class, 100)->make()->toArray();
 
         foreach ($products as $product)
         {

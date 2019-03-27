@@ -29,7 +29,7 @@ $factory->define(App\Product::class, function (Faker\Generator $faker) {
     return [
         'name' => $faker->name,
         'description' => $faker->text(1000),
-        'image' => $faker->imageUrl(700, 400, 'abstract'),
+        'image' => $faker->imageUrl(700, 400, 'food'),
         'category_id' => $faker->randomElement(App\Category::all()->pluck('id')->toArray())
     ];
 });
