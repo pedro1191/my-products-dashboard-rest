@@ -27,7 +27,8 @@ class ProductController extends Controller
         $this->validate($request, [
             'name' => ['sometimes', 'required'],
             'description' => ['sometimes', 'required'],
-            'orderBy' => ['sometimes', 'in:id,name,description'],
+            'category_id' => ['sometimes', 'required'],
+            'orderBy' => ['sometimes', 'in:id,name,description,category_id'],
             'orderDirection' => ['sometimes', 'in:asc,desc']
         ]);
 
@@ -52,6 +53,9 @@ class ProductController extends Controller
                             ->setBindings([$q]);
                     });
                 }
+                if (isset($input['category_id'])) {
+                    $query->where('category_id', $input['category_id']);
+                }
             })
             ->orderBy($orderBy, $orderDirection)
             ->paginate(Controller::DEFAULT_PAGINATION_RESULTS);
@@ -71,6 +75,7 @@ class ProductController extends Controller
         $this->validate($request, [
             'name' => ['required', 'min:1', 'max:100'],
             'description' => ['required', 'min:1', 'max:1000'],
+            'category_id' => ['required', 'exists:categories,id'],
             'image' => ['required', 'image', 'max:128']
         ]);
 
@@ -80,6 +85,7 @@ class ProductController extends Controller
         $product = $this->product->create([
             'name' => $request->input('name'),
             'description' => $request->input('description'),
+            'category_id' => $request->input('category_id'),
             'image' => $image
         ]);
 
@@ -120,6 +126,7 @@ class ProductController extends Controller
         $this->validate($request, [
             'name' => ['sometimes', 'required', 'min:1', 'max:100'],
             'description' => ['sometimes', 'required', 'min:1', 'max:1000'],
+            'category_id' => ['sometimes', 'required', 'exists:categories,id'],
             'image' => ['sometimes', 'required', 'image', 'max:128'],
         ]);
 
@@ -135,6 +142,7 @@ class ProductController extends Controller
         $product->fill([
             'name' => $request->input('name') ?? $product->name,
             'description' => $request->input('description') ?? $product->description,
+            'category_id' => $request->input('category_id') ?? $product->category_id,
             'image' => is_null($image) ? $product->image : $image,
         ]);
         $product->save();
