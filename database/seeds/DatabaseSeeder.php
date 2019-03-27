@@ -49,37 +49,28 @@ class CategoriesTableSeeder extends Seeder
 
 class ProductsTableSeeder extends Seeder
 {
-    /**
-     * Generate base64 image string from url
-     * 
-     * @param $url
-     * @return string
-     */
-    private function generateBase64ImageString($url)
-    {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_URL, $url);
-        $image = curl_exec($ch);
-        $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
-        curl_close($ch);
-
-        return "data:{$contentType};base64,"
-            . base64_encode($image);
-    }
-
     public function run()
     {
         \DB::table('products')->delete();
 
         $products = factory(\App\Product::class, 100)->make()->toArray();
+        
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
         foreach ($products as $product)
         {
-            // $imageUrl = $product['image'];
-            // $product['image'] = $this->generateBase64ImageString($imageUrl);
-
+            $imageUrl = $product['image'];
+            
+            curl_setopt($ch, CURLOPT_URL, $imageUrl);
+            $image = curl_exec($ch);
+            $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+            
+            $product['image'] = "data:{$contentType};base64," . base64_encode($image);
+            
             \App\Product::create($product);
         }
+
+        curl_close($ch);
     }
 }
