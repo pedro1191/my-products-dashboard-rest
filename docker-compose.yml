@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile
 
-    image: generic-website-admin-rest.local
+    image: my-products-dashboard-rest.local
 
     ports:
         - 8087:80
