@@ -21,4 +21,11 @@ class Category extends Model
      * @var array
      */
     protected $hidden = [];
+
+    /**
+     * Returns the category products
+     */
+    public function products() {
+        return $this->hasMany('App\Product', 'category_id');
+    }
 }
