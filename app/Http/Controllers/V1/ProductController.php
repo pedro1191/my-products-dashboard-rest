@@ -162,6 +162,10 @@ class ProductController extends Controller
             return $this->response->errorNotFound();
         }
 
+        if ($product->category->products()->count() <= 3) {
+            return $this->response->errorForbidden('There must be at least 3 products per category registered in the system.');
+        }
+
         \Log::info('User ' . Auth::user()->id . ' is deleting a product with id ' . $product->id . '...');
 
         $product->delete();
@@ -171,7 +175,7 @@ class ProductController extends Controller
 
     /**
      * Generate base64 image string
-     * 
+     *
      * @param $image
      * @return string
      */

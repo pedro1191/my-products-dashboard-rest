@@ -38,7 +38,7 @@ class CategoriesTableSeeder extends Seeder
     {
         \DB::table('categories')->delete();
 
-        $categories = factory(\App\Category::class, 5)->make()->toArray();
+        $categories = factory(\App\Category::class, \App\Category::CATEGORIES_QUANTITY)->make()->toArray();
 
         foreach ($categories as $category)
         {
@@ -53,24 +53,27 @@ class ProductsTableSeeder extends Seeder
     {
         \DB::table('products')->delete();
 
-        $products = factory(\App\Product::class, 100)->make()->toArray();
-        
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        foreach (\App\Category::all() as $category) {
+            $products = factory(\App\Product::class, \App\Product::PRODUCTS_PER_CATEGORY_QUANTITY)->make()->toArray();
 
-        foreach ($products as $product)
-        {
-            $imageUrl = $product['image'];
-            
-            curl_setopt($ch, CURLOPT_URL, $imageUrl);
-            $image = curl_exec($ch);
-            $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
-            
-            $product['image'] = "data:{$contentType};base64," . base64_encode($image);
-            
-            \App\Product::create($product);
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+            foreach ($products as $product)
+            {
+                $imageUrl = $product['image'];
+
+                curl_setopt($ch, CURLOPT_URL, $imageUrl);
+                $image = curl_exec($ch);
+                $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+
+                $product['image'] = "data:{$contentType};base64," . base64_encode($image);
+                $product['category_id'] = $category->id;
+
+                \App\Product::create($product);
+            }
+
+            curl_close($ch);
         }
-
-        curl_close($ch);
     }
 }

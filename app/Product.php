@@ -23,6 +23,11 @@ class Product extends Model
     protected $hidden = [];
 
     /**
+     * The number of records to be created while seeding the database
+     */
+    const PRODUCTS_PER_CATEGORY_QUANTITY = 5;
+
+    /**
      * Returns the product category
      */
     public function category() {

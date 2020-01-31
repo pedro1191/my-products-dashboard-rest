@@ -129,6 +129,10 @@ class CategoryController extends Controller
             return $this->response->errorNotFound();
         }
 
+        if ($this->category->count() <= 3) {
+            return $this->response->errorForbidden('There must be at least 3 categories registered in the system.');
+        }
+
         \Log::info('User ' . Auth::user()->id . ' is deleting a category with id ' . $category->id . '...');
 
         $category->delete();
