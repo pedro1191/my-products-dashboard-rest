@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class ProductController extends Controller
 {
@@ -73,7 +74,15 @@ class ProductController extends Controller
     {
         // User input validation
         $this->validate($request, [
-            'name' => ['required', 'min:1', 'max:100'],
+            'name' => [
+                'required',
+                'min:1',
+                'max:100',
+                Rule::unique('products')->where(function ($query) use($request) {
+                    return $query->where('name', $request->input('name'))
+                        ->where('category_id', $request->input('category_id'));
+                }),
+            ],
             'description' => ['required', 'min:1', 'max:1000'],
             'category_id' => ['required', 'exists:categories,id'],
             'image' => ['required', 'image', 'max:128']
@@ -124,7 +133,17 @@ class ProductController extends Controller
 
         // User input validation
         $this->validate($request, [
-            'name' => ['sometimes', 'required', 'min:1', 'max:100'],
+            'name' => [
+                'sometimes',
+                'required',
+                'min:1',
+                'max:100',
+                Rule::unique('products')->where(function ($query) use($request, $product) {
+                    return $query->where('id', '!=', $product->id)
+                        ->where('name', $request->input('name'))
+                        ->where('category_id', $request->input('category_id') ?? $product->category->id);
+                }),
+            ],
             'description' => ['sometimes', 'required', 'min:1', 'max:1000'],
             'category_id' => ['sometimes', 'required', 'exists:categories,id'],
             'image' => ['sometimes', 'required', 'image', 'max:128'],

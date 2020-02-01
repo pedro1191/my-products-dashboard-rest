@@ -60,7 +60,7 @@ class CategoryController extends Controller
     {
         // User input validation
         $this->validate($request, [
-            'name' => ['required', 'min:1', 'max:100'],
+            'name' => ['required', 'min:1', 'max:100', 'unique:categories,name'],
         ]);
 
         // Everything OK
@@ -103,7 +103,7 @@ class CategoryController extends Controller
 
         // User input validation
         $this->validate($request, [
-            'name' => ['sometimes', 'required', 'min:1', 'max:100']
+            'name' => ['sometimes', 'required', 'min:1', 'max:100', "unique:categories,name,$id,id"]
         ]);
 
         // Everything OK
