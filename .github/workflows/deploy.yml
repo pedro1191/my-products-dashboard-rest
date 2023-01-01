@@ -1,0 +1,35 @@
+name: Deployment Workflow
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  deploy:
+    name: Deploy application
+    runs-on: ubuntu-latest
+    steps:
+    - name: Build and deploy
+      uses: appleboy/ssh-action@master
+      env:
+        CONTAINER_NAME: my-products-dashboard-back
+        CONTAINER_PORT: 8087
+        DOT_ENV: ${{ secrets.DOT_ENV }}
+        IMAGE: my-products-dashboard-back
+        TAG: latest
+        WORKDIR: portfolio/php_projects/my-products-dashboard-rest
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        port: ${{ secrets.PORT }}
+        envs: CONTAINER_NAME, CONTAINER_PORT, DOT_ENV, IMAGE, TAG, WORKDIR
+        script: |
+          cd $WORKDIR
+          git pull origin master
+          echo $DOT_ENV | base64 -d > .env
+          source .env
+          docker build -t $IMAGE:$TAG .
+          docker stop $CONTAINER_NAME || true
+          docker rm $CONTAINER_NAME || true
+          docker run -d --restart always --name $CONTAINER_NAME -p $CONTAINER_PORT:80 $IMAGE:$TAG
+          docker system prune -f
