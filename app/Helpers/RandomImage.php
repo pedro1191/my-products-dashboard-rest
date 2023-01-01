@@ -5,8 +5,8 @@ namespace App\Helpers;
 class RandomImage
 {
     const IMAGE_SOURCE = 'https://loremflickr.com/';
-    const IMAGE_WIDTH = 700;
-    const IMAGE_HEIGHT = 400;
+    const IMAGE_WIDTH = 300;
+    const IMAGE_HEIGHT = 300;
     const IMAGE_CATEGORIES = 'food,dish';
 
     public static function url(): string
