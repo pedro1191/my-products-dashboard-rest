@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\V1;
+namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\Auth\Login;
 use Illuminate\Http\Response;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -14,27 +14,15 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function login(Request $request)
+    public function login(Login $request)
     {
-        // User input validation
-        $this->validate($request, [
-            'email' => ['required', 'email', 'exists:users,email'],
-            'password' => ['required'],
-        ]);
+        $credentials = $request->validated();
 
-        $credentials = $request->only(['email', 'password']);
-
-        if (! $token = Auth::attempt($credentials)) {
-            return response()->json([
-                'message' => 'The given data was invalid.',
-                'status_code' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                'errors' => [
-                    'password' => ['Your password was incorrect.']
-                ]
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        if (!$token = Auth::attempt($credentials)) {
+            return response(null, Response::HTTP_UNAUTHORIZED);
         }
 
-        \Log::info('User ' . Auth::user()->id . ' is logging in...');
+        Log::info('User ' . Auth::user()->id . ' is logging in...');
 
         return $this->respondWithToken($token);
     }
@@ -56,11 +44,11 @@ class AuthController extends Controller
      */
     public function logout()
     {
-        \Log::info('User ' . Auth::user()->id . ' is logging out...');
+        Log::info('User ' . Auth::user()->id . ' is logging out...');
 
         Auth::logout();
 
-        return response()->json(['message' => 'Successfully logged out']);
+        return response()->noContent();
     }
 
     /**
@@ -70,7 +58,7 @@ class AuthController extends Controller
      */
     public function refresh()
     {
-        \Log::info('User ' . Auth::user()->id . ' is refreshing his/her token...');
+        Log::info('User ' . Auth::user()->id . ' is refreshing his/her token...');
 
         return $this->respondWithToken(Auth::refresh());
     }
@@ -87,7 +75,7 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => Auth::factory()->getTTL() * 60
+            'expires_in' => Auth::factory()->getTTL() * 60,
         ]);
     }
 }

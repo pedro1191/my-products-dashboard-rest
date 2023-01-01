@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +14,25 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+/**
+ * Unauthenticated Routes
+ */
+
+Route::get('/', function () {
+    return "Hello from " . config('app.name');
+});
+
+// Auth
+Route::post('/auth/login', [AuthController::class, 'login']);
+
+/**
+ * Authenticated Routes
+ */
+Route::group([
+    'middleware' => ['auth:api'],
+], function () {
+    // Auth
+    Route::get('/auth/me', [AuthController::class, 'me']);
+    Route::put('/auth/refresh', [AuthController::class, 'refresh']);
+    Route::delete('/auth/logout', [AuthController::class, 'logout']);
 });
