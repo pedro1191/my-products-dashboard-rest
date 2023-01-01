@@ -1,18 +1,24 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'name', 'description', 'image', 'category_id'
+        'category_id',
+        'description',
+        'image',
+        'name',
     ];
 
     /**
@@ -23,14 +29,10 @@ class Product extends Model
     protected $hidden = [];
 
     /**
-     * The number of records to be created while seeding the database
-     */
-    const PRODUCTS_PER_CATEGORY_QUANTITY = 5;
-
-    /**
      * Returns the product category
      */
-    public function category() {
-        return $this->belongsTo('App\Category', 'category_id');
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 }
