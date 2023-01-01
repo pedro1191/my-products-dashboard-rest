@@ -32,6 +32,9 @@ Route::post('/auth/login', [AuthController::class, 'login']);
 Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/categories/{category}', [CategoryController::class, 'show']);
 
+// Message
+Route::post('/messages', [MessageController::class, 'store']);
+
 // Product
 Route::get('/products', [ProductController::class, 'index']);
 Route::get('/products/{product}', [ProductController::class, 'show']);
